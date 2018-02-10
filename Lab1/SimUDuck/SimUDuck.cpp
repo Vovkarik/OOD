@@ -61,7 +61,7 @@ struct IDanceBehavior
 	virtual void Dance() = 0;
 };
 
-class ValtzDanceBehavior : public IDanceBehavior
+class WaltzDanceBehavior : public IDanceBehavior
 {
 public:
 	void Dance() override
@@ -132,7 +132,7 @@ class MallardDuck : public Duck
 {
 public:
 	MallardDuck()
-		: Duck(make_unique<FlyWithWings>(), make_unique<QuackBehavior>(), make_unique<ValtzDanceBehavior>())
+		: Duck(make_unique<FlyWithWings>(), make_unique<QuackBehavior>(), make_unique<WaltzDanceBehavior>())
 	{
 	}
 
