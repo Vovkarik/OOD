@@ -9,6 +9,8 @@ struct IFlyBehavior
 {
 	virtual ~IFlyBehavior(){};
 	virtual void Fly() = 0;
+	virtual int GetFlightCount() = 0;
+	virtual void SetFlightCount(int oldCount) = 0;
 };
 
 class FlyWithWings : public IFlyBehavior
@@ -16,14 +18,47 @@ class FlyWithWings : public IFlyBehavior
 public:
 	void Fly() override
 	{
-		cout << "I'm flying with wings!!" << endl;
+		m_flightCount++;
+		cout << "I'm flying with wings!! " << m_flightCount << " flight"<<endl;
 	}
+	int GetFlightCount() override
+	{
+		return m_flightCount;
+	}
+	void SetFlightCount(int oldCount) override
+	{
+		m_flightCount = oldCount;
+	}
+private:
+	int m_flightCount = 0;
+};
+
+class FlyRocketPowered : public IFlyBehavior
+{
+public:
+	void Fly() override
+	{
+		m_flightCount++;
+		cout << "I'm flying with rocket engine!! " << m_flightCount << " flight" << endl;
+	}
+	int GetFlightCount() override
+	{
+		return m_flightCount;
+	}
+	void SetFlightCount(int oldCount) override
+	{
+		m_flightCount = oldCount;
+	}
+private:
+	int m_flightCount = 0;
 };
 
 class FlyNoWay : public IFlyBehavior
 {
 public:
-	void Fly() override {}
+	void Fly() override {};
+	int GetFlightCount() override { return 0; };
+	void SetFlightCount(int oldCount) override {};
 };
 
 struct IQuackBehavior
@@ -116,8 +151,14 @@ public:
 	}
 	void SetFlyBehavior(unique_ptr<IFlyBehavior>&& flyBehavior)
 	{
+		int flightCount = 0;
+		if (m_flyBehavior != nullptr)
+		{
+			flightCount = m_flyBehavior->GetFlightCount();
+		}
 		assert(flyBehavior);
 		m_flyBehavior = move(flyBehavior);
+		m_flyBehavior->SetFlightCount(flightCount);
 	}
 	virtual void Display() const = 0;
 	virtual ~Duck() = default;
@@ -213,10 +254,12 @@ void main()
 {
 	MallardDuck mallarDuck;
 	PlayWithDuck(mallarDuck);
-
+	PlayWithDuck(mallarDuck);
+	PlayWithDuck(mallarDuck);
 	RedheadDuck redheadDuck;
 	PlayWithDuck(redheadDuck);
-
+	PlayWithDuck(redheadDuck);
+	PlayWithDuck(redheadDuck);
 	RubberDuck rubberDuck;
 	PlayWithDuck(rubberDuck);
 
@@ -226,5 +269,10 @@ void main()
 	ModelDuck modelDuck;
 	PlayWithDuck(modelDuck);
 	modelDuck.SetFlyBehavior(make_unique<FlyWithWings>());
+	PlayWithDuck(modelDuck);
+	modelDuck.SetFlyBehavior(make_unique<FlyRocketPowered>());
+	PlayWithDuck(modelDuck);
+	modelDuck.SetFlyBehavior(make_unique<FlyWithWings>());
+	PlayWithDuck(modelDuck);
 	PlayWithDuck(modelDuck);
 }
